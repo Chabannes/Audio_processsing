@@ -4,44 +4,87 @@
 #include <iostream>
 
  
+void speed_up(std::string file_name);
+void flapping(std::string file_name, double sampling_frequency);
+
+
 int main()
 {
+    double Fs = 44100 ;
+    // speed_up("europa.raw");
+    flapping("europa.raw", Fs);
 
-    FILE* fileIn = fopen("europa.raw", "rb");
+}
+
+
+void speed_up(std::string file_name)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
     FILE* fileOut = fopen("output", "wb");
 
     long lSize;
     char * buffer;
-    size_t result1;
-    size_t result2;
+    char * buffer_fast;
 
     if (fileIn==NULL) {fputs ("File error",stderr); exit (1);}
 
-    // obtain file size:
     fseek (fileIn , 0 , SEEK_END);
     lSize = ftell (fileIn);
     rewind (fileIn);
 
-    // allocate memory to contain the whole file:
     buffer = (char*) malloc (sizeof(char)*lSize);
-    std::cout << sizeof(*buffer) << " " << sizeof(char)*lSize << std::endl;
-    if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+    buffer_fast = (char*) malloc (sizeof(char)*lSize/2);
 
-    // copy the file into the buffer:
-    result1 = fread (buffer, 1, lSize, fileIn);
-    if (result1 != lSize) {fputs ("Reading error",stderr); exit (3);}
+    fread (buffer, 1, lSize, fileIn);
 
-    std::cout << "\n\n" << result1 << "\n\n";
+    int count = 0;
+    for (int i=0; i < sizeof(char)*lSize ; i++)
+    {
+        if (i%2 == 0)
+        {
+            buffer_fast[count] = buffer[i];
+            count++;
+        }
+    }
 
-    // copy the buffer in out.raw
-    result2 = fwrite(buffer,  sizeof(char), lSize, fileOut);
-    std::cout << result2 << std::endl;
-    if (result2 != lSize) {fputs ("Writing error",stderr); exit (4);}
+    fwrite(buffer_fast,  sizeof(char), lSize/2, fileOut);
 
-
-    // terminate
     fclose (fileIn);
     fclose (fileOut);
     free (buffer);
+    free (buffer_fast);
+}
 
+void flapping(std::string file_name, double Fs)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
+    FILE* fileOut = fopen("output", "wb");
+
+    long lSize;
+    char * buffer;
+
+    if (fileIn==NULL) {fputs ("File error",stderr); exit (1);}
+
+    fseek (fileIn , 0 , SEEK_END);
+    lSize = ftell (fileIn);
+    rewind (fileIn);
+
+    buffer = (char*) malloc (sizeof(char)*lSize);
+
+    fread (buffer, 1, lSize, fileIn);
+
+    int count = 0;
+    for (int i=0; i < sizeof(char)*lSize ; i++)
+    {
+        if (i%2 == 0)
+        {
+            buffer[i] = buffer[i] * (0.2 + sin(i*2.0*M_PI/Fs)) ;
+        }
+    }
+
+    fwrite(buffer,  sizeof(char), lSize, fileOut);
+
+    fclose (fileIn);
+    fclose (fileOut);
+    free (buffer);
 }
