@@ -3,8 +3,6 @@
 #include <math.h>
 #include <iostream>
 
-
-#define N 3 * 44100
  
 int main()
 {
