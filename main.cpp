@@ -20,7 +20,7 @@ void flanging(std::string file_name, double Fs, float g, int delay_max);
 
 int main()
 {
-    double Fs = 44100 ;std::string file_name;
+    double Fs = 44100;
     // speed_up("europa_8.raw");
     // modulation("europa_8.raw", Fs, 5);
     // random_MSB("europa_8.raw", 1);
