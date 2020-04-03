@@ -1,18 +1,27 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
+#include <sstream>
+#include <bitset>
 #include <iostream>
 
  
 void speed_up(std::string file_name);
 void flapping(std::string file_name, double sampling_frequency);
+void random_MSB(std::string file_name, int msb_amount);
+void random_LSB(std::string file_name, int lsb_amount);
+
 
 
 int main()
 {
-    double Fs = 44100 ;
+    double Fs = 44100 ;std::string file_name;
     // speed_up("europa.raw");
-    flapping("europa.raw", Fs);
+    // flapping("europa.raw", Fs);
+    // random_MSB("europa.raw", 1);
+    random_LSB("europa.raw", 3);
+
+
 
 }
 
@@ -84,6 +93,89 @@ void flapping(std::string file_name, double Fs)
 
     fwrite(buffer,  sizeof(char), lSize, fileOut);
 
+    fclose (fileIn);
+    fclose (fileOut);
+    free (buffer);
+}
+
+
+void random_MSB(std::string file_name, int msb_amount)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
+    FILE* fileOut = fopen("output", "wb");
+
+    long lSize;
+    char * buffer;
+    unsigned long a;
+    unsigned char c;
+
+    if (fileIn==NULL) {fputs ("File error", stderr); exit (1);}
+
+    fseek (fileIn , 0 , SEEK_END);
+    lSize = ftell (fileIn);
+    rewind (fileIn);
+
+    buffer = (char*) malloc (sizeof(char)*lSize);
+
+    fread (buffer, 1, lSize, fileIn);
+
+    for  (int i=0; i < sizeof(char)*lSize ; i++)
+    {
+        std::bitset<8> b(buffer[i]);
+
+        for (int j=0; j <= msb_amount ; j++)
+        {
+            b[8-j] = rand() % 2;
+        }
+
+        a = b.to_ulong();
+        c = static_cast<unsigned char>( a ); 
+        buffer[i] = c;
+    }
+    
+    fwrite(buffer,  sizeof(char), lSize, fileOut);
+    fclose (fileIn);
+    fclose (fileOut);
+    free (buffer);
+}
+
+
+
+void random_LSB(std::string file_name, int lsb_amount)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
+    FILE* fileOut = fopen("output", "wb");
+
+    long lSize;
+    char * buffer;
+    unsigned long a;
+    unsigned char c;
+
+    if (fileIn==NULL) {fputs ("File error", stderr); exit (1);}
+
+    fseek (fileIn , 0 , SEEK_END);
+    lSize = ftell (fileIn);
+    rewind (fileIn);
+
+    buffer = (char*) malloc (sizeof(char)*lSize);
+
+    fread (buffer, 1, lSize, fileIn);
+
+    for  (int i=0; i < sizeof(char)*lSize ; i++)
+    {
+        std::bitset<8> b(buffer[i]);
+
+        for (int j=0; j <= lsb_amount ; j++)
+        {
+            b[j] = rand() % 2;
+        }
+
+        a = b.to_ulong();
+        c = static_cast<unsigned char>( a ); 
+        buffer[i] = c;
+    }
+    
+    fwrite(buffer,  sizeof(char), lSize, fileOut);
     fclose (fileIn);
     fclose (fileOut);
     free (buffer);
