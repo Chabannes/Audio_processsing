@@ -9,18 +9,24 @@
 
  
 void speed_up(std::string file_name);
+void speed_up_16(std::string file_name);
 void modulation(std::string file_name, double sampling_frequency, float f);
+void modulation_16(std::string file_name, double sampling_frequency, float f);
 void random_MSB(std::string file_name, int msb_amount);
 void random_LSB(std::string file_name, int lsb_amount);
 void reverse(std::string file_name);
 void phase_shifter(std::string file_name, float g, int m);
 void echo(std::string file_name, double sampling_frequency, float echo_dt, float echo_fading);
 void flanging(std::string file_name, double Fs, float g, int delay_max);
+void random_MSB_16(std::string file_name, int msb_amount);
+
 
 
 int main()
 {
     double Fs = 44100;
+
+    //  // for 8 digits
     // speed_up("europa_8.raw");
     // modulation("europa_8.raw", Fs, 5);
     // random_MSB("europa_8.raw", 1);
@@ -28,9 +34,15 @@ int main()
     // reverse("europa_8.raw");
     // phase_shifter("europa_8.raw", -1, 1000);
     // echo("europa_8.raw", Fs, 2, 0.7);
-    flanging("europa_8.raw", Fs, 0.80, 90);
+    // flanging("europa_8.raw", Fs, 0.80, 90);
 
 
+    // // for 16 digits
+    speed_up_16("smokeotw_16.raw");
+    // modulation_16("smokeotw_16.raw", Fs, 10);
+
+    //  ne marche pas
+    // random_MSB_16("smokeotw_16.raw", 2);
 
 }
 
@@ -54,7 +66,8 @@ void speed_up(std::string file_name)
 
     fread (buffer, 1, lSize, fileIn);
 
-    int count = 0;
+    int count = 0;void modulation_16(std::string file_name, double sampling_frequency, float f);
+
     for (int i=0; i < sizeof(char)*lSize ; i++)
     {
         if (i%2 == 0)
@@ -345,3 +358,118 @@ void flanging(std::string file_name, double Fs, float g, int delay_max)
 }
 
 
+void speed_up_16(std::string file_name)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
+    FILE* fileOut = fopen("output", "wb");
+
+    long lSize;
+    int16_t * buffer;
+    int16_t * buffer_fast;
+
+    if (fileIn==NULL) {fputs ("File error",stderr); exit (1);}
+
+    fseek (fileIn , 0 , SEEK_END);
+    lSize = ftell (fileIn);
+    std::cout << lSize << std::endl;
+    rewind (fileIn);
+
+    buffer = (int16_t*) malloc (sizeof(int16_t)*lSize);
+    buffer_fast = (int16_t*) malloc (sizeof(int16_t)*lSize/2);
+
+    fread (buffer, sizeof(int16_t), lSize, fileIn);
+
+    int count = 0;
+    for (int i=0; i < lSize ; i++)
+    {
+        if (i%2 == 0)
+        {
+            buffer_fast[count] = buffer[i];
+            count++;
+        }
+    }
+
+    fwrite(buffer_fast,  sizeof(int16_t), lSize, fileOut);
+
+    fclose (fileIn);
+    fclose (fileOut);
+    free (buffer);
+}
+
+
+void modulation_16(std::string file_name, double Fs, float f)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
+    FILE* fileOut = fopen("output", "wb");
+
+    long lSize;
+    int16_t * buffer;
+
+    if (fileIn==NULL) {fputs ("File error",stderr); exit (1);}
+
+    fseek (fileIn , 0 , SEEK_END);
+    lSize = ftell (fileIn);
+    rewind (fileIn);
+
+    buffer = (int16_t*) malloc (sizeof(int16_t)*lSize);
+
+    fread (buffer, sizeof(int16_t), lSize, fileIn);
+
+    int count = 0;
+    for (int i=0; i < lSize ; i++)
+    {
+        if (i%2 == 0)
+        {
+            buffer[i] = buffer[i] * sin(i*f*2.0*M_PI/Fs);
+        }
+    }
+ 
+    fwrite(buffer,  sizeof(int16_t), lSize, fileOut);
+
+    fclose (fileIn);
+    fclose (fileOut);
+    free (buffer);
+}
+
+
+// NE MARCHE PAS 
+
+void random_MSB_16(std::string file_name, int msb_amount)
+{
+    FILE* fileIn = fopen(file_name.c_str(), "rb");
+    FILE* fileOut = fopen("output", "wb");
+
+    long lSize;
+    int16_t * buffer;
+    unsigned long a;
+    unsigned char c;
+
+    if (fileIn==NULL) {fputs ("File error", stderr); exit (1);}
+
+    fseek (fileIn , 0 , SEEK_END);
+    lSize = ftell (fileIn);
+    rewind (fileIn);
+
+    buffer = (int16_t*) malloc (sizeof(int16_t)*lSize);
+
+    fread (buffer, 2, lSize, fileIn);
+
+    for  (int i=0; i < sizeof(char)*lSize ; i++)
+    {
+        std::bitset<16> b(buffer[i]);
+
+        for (int j=0; j <= msb_amount ; j++)
+        {
+            b[16-j] = rand() % 2;
+        }
+
+        a = b.to_ulong();
+        c = static_cast<unsigned char>( a ); 
+        buffer[i] = c;
+    }
+    
+    fwrite(buffer,  2, lSize, fileOut);
+    fclose (fileIn);
+    fclose (fileOut);
+    free (buffer);
+}
