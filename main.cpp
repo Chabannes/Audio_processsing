@@ -38,11 +38,11 @@ int main()
 
 
     // // for 16 digits
-    speed_up_16("smokeotw_16.raw");
+    // speed_up_16("smokeotw_16.raw");
     // modulation_16("smokeotw_16.raw", Fs, 10);
 
     //  ne marche pas
-    // random_MSB_16("smokeotw_16.raw", 2);
+    random_MSB_16("smokeotw_16.raw", 2);
 
 }
 
@@ -363,24 +363,24 @@ void speed_up_16(std::string file_name)
     FILE* fileIn = fopen(file_name.c_str(), "rb");
     FILE* fileOut = fopen("output", "wb");
 
-    long lSize;
+    int sample_size = 2;
     int16_t * buffer;
     int16_t * buffer_fast;
 
     if (fileIn==NULL) {fputs ("File error",stderr); exit (1);}
 
     fseek (fileIn , 0 , SEEK_END);
-    lSize = ftell (fileIn);
-    std::cout << lSize << std::endl;
+    int size_in_bytes = ftell (fileIn);
+    int size_in_samples = size_in_bytes / sample_size;
     rewind (fileIn);
 
-    buffer = (int16_t*) malloc (sizeof(int16_t)*lSize);
-    buffer_fast = (int16_t*) malloc (sizeof(int16_t)*lSize/2);
+    buffer = (int16_t*) malloc (sizeof(char)*size_in_bytes);
+    buffer_fast = (int16_t*) malloc (sizeof(char)*size_in_bytes/2);
 
-    fread (buffer, sizeof(int16_t), lSize, fileIn);
+    fread (buffer, sizeof(int16_t), size_in_samples, fileIn);
 
     int count = 0;
-    for (int i=0; i < lSize ; i++)
+    for (int i=0; i < size_in_samples ; i++)
     {
         if (i%2 == 0)
         {
@@ -389,7 +389,7 @@ void speed_up_16(std::string file_name)
         }
     }
 
-    fwrite(buffer_fast,  sizeof(int16_t), lSize, fileOut);
+    fwrite(buffer_fast,  sizeof(int16_t), size_in_samples, fileOut);
 
     fclose (fileIn);
     fclose (fileOut);
@@ -402,21 +402,22 @@ void modulation_16(std::string file_name, double Fs, float f)
     FILE* fileIn = fopen(file_name.c_str(), "rb");
     FILE* fileOut = fopen("output", "wb");
 
-    long lSize;
+    int sample_size = 2;
     int16_t * buffer;
 
     if (fileIn==NULL) {fputs ("File error",stderr); exit (1);}
 
     fseek (fileIn , 0 , SEEK_END);
-    lSize = ftell (fileIn);
+    int size_in_bytes = ftell (fileIn);
+    int size_in_samples = size_in_bytes / sample_size;
     rewind (fileIn);
 
-    buffer = (int16_t*) malloc (sizeof(int16_t)*lSize);
+    buffer = (int16_t*) malloc (sizeof(char)*size_in_bytes);
 
-    fread (buffer, sizeof(int16_t), lSize, fileIn);
+    fread (buffer, sizeof(int16_t), size_in_samples, fileIn);
 
     int count = 0;
-    for (int i=0; i < lSize ; i++)
+    for (int i=0; i < size_in_samples ; i++)
     {
         if (i%2 == 0)
         {
@@ -424,7 +425,7 @@ void modulation_16(std::string file_name, double Fs, float f)
         }
     }
  
-    fwrite(buffer,  sizeof(int16_t), lSize, fileOut);
+    fwrite(buffer,  sizeof(int16_t), size_in_samples, fileOut);
 
     fclose (fileIn);
     fclose (fileOut);
@@ -432,29 +433,28 @@ void modulation_16(std::string file_name, double Fs, float f)
 }
 
 
-// NE MARCHE PAS 
-
 void random_MSB_16(std::string file_name, int msb_amount)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
     FILE* fileOut = fopen("output", "wb");
 
-    long lSize;
     int16_t * buffer;
+    int sample_size = 2;
     unsigned long a;
     unsigned char c;
 
     if (fileIn==NULL) {fputs ("File error", stderr); exit (1);}
 
     fseek (fileIn , 0 , SEEK_END);
-    lSize = ftell (fileIn);
+    int size_in_bytes = ftell (fileIn);
+    int size_in_samples = size_in_bytes / sample_size;
     rewind (fileIn);
 
-    buffer = (int16_t*) malloc (sizeof(int16_t)*lSize);
+    buffer = (int16_t*) malloc (sizeof(char)*sample_size);
 
-    fread (buffer, 2, lSize, fileIn);
+    fread (buffer, 2, sample_size, fileIn);
 
-    for  (int i=0; i < sizeof(char)*lSize ; i++)
+    for  (int i=0; i < sample_size ; i++)
     {
         std::bitset<16> b(buffer[i]);
 
@@ -468,7 +468,7 @@ void random_MSB_16(std::string file_name, int msb_amount)
         buffer[i] = c;
     }
     
-    fwrite(buffer,  2, lSize, fileOut);
+    fwrite(buffer,  2, sample_size, fileOut);
     fclose (fileIn);
     fclose (fileOut);
     free (buffer);
