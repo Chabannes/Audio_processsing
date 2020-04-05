@@ -8,7 +8,7 @@
 void modulation(std::string file_name, double Fs, float f)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/modulation_8", "wb");
 
     char * buffer;
     int sample_size = 1;
@@ -44,7 +44,7 @@ void modulation(std::string file_name, double Fs, float f)
 void modulation_16(std::string file_name, double Fs, float f)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/modulation_16", "wb");
 
     int sample_size = 2;
     int16_t * buffer;

@@ -1,15 +1,17 @@
 #include <math.h>
-#include <bitset>
 #include <iostream>
-#include "random_LSB.h"
+#include "reverse.h"
 
 
-void random_LSB(std::string file_name, int lsb_amount)
+
+void reverse(std::string file_name)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/reverse_8", "wb");
 
     char * buffer;
+    char * buffer_reverse;
+
     int sample_size = 1;
 
     unsigned long a;
@@ -26,24 +28,19 @@ void random_LSB(std::string file_name, int lsb_amount)
     rewind (fileIn);
 
     buffer = (char*) malloc (sizeof(char)*size_in_bytes);
+    buffer_reverse = (char*) malloc (sizeof(char)*size_in_bytes);
 
     fread (buffer, 1, size_in_samples, fileIn);
 
-    for  (int i=0; i < size_in_samples ; i++)
+    for (int i=0; i < size_in_samples ; i++)
     {
-        std::bitset<8> b(buffer[i]);
-
-        for (int j=0; j <= lsb_amount ; j++)
-        {
-            b[j] = rand() % 2;
-        }
-        a = b.to_ulong();
-        c = static_cast<unsigned char>( a ); 
-        buffer[i] = c;
+        buffer_reverse[size_in_samples-i] = buffer[i];
     }
-    
-    fwrite(buffer,  sizeof(char), size_in_samples, fileOut);
+
+    fwrite(buffer_reverse,  sizeof(char), size_in_samples, fileOut);
+
     fclose (fileIn);
     fclose (fileOut);
     free (buffer);
+    free (buffer_reverse);
 }

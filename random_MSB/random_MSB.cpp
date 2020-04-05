@@ -11,7 +11,7 @@ void random_MSB(std::string file_name, int msb_amount)
 
 
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/random_MSB_8", "wb");
 
     char * buffer;
     int sample_size = 1;
@@ -57,7 +57,7 @@ void random_MSB(std::string file_name, int msb_amount)
 void random_MSB_16(std::string file_name, int msb_amount)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/random_MSB_16", "wb");
 
     int16_t* buffer;
     int sample_size = 2;

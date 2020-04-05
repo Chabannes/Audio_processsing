@@ -13,7 +13,7 @@
 void speed_up(std::string file_name)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/speed_up_8", "wb");
 
     long lSize;
     char * buffer;
@@ -55,7 +55,7 @@ void speed_up(std::string file_name)
 void speed_up_16(std::string file_name)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/speed_up_16", "wb");
 
     int sample_size = 2;
     int16_t * buffer;

@@ -10,7 +10,7 @@
 void flanging(std::string file_name, double Fs, float g, int delay_max)
 {
     FILE* fileIn = fopen(file_name.c_str(), "rb");
-    FILE* fileOut = fopen("output", "wb");
+    FILE* fileOut = fopen("Output/flanging_8", "wb");
 
     double m;
     int p;
