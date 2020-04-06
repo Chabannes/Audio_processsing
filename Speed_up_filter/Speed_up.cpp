@@ -1,13 +1,5 @@
 #include "Speed_up.h"
 
-// #include <stdio.h>
-// #include <stdint.h>
-// #include <math.h>
-// #include <sstream>
-// #include <bitset>
-// #include <string.h>
-// #include <iostream>
-// #include <stdlib.h>
 
 Speed_up::Speed_up() 
 {}
