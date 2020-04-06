@@ -40,10 +40,10 @@ void Flanging::apply()
 
     m_bufferIn = (char*) malloc(sizeof(char)*m_size_in_bytes);
     m_bufferOut = (char*) malloc(sizeof(char)*m_size_in_bytes);
-    char* new_bufferIn_8;
-    char* new_bufferOut_8;
-    int16_t* new_bufferIn_16;
-    int16_t* new_bufferOut_16;
+    char* new_bufferIn_8 = (char*) (m_bufferIn);
+    char* new_bufferOut_8 = (char*) (m_bufferIn);
+    int16_t* new_bufferIn_16 = (int16_t*) (m_bufferIn);
+    int16_t* new_bufferOut_16 = (int16_t*) (m_bufferIn);
 
     rewind (m_fileIn);
     float delay;
@@ -53,9 +53,6 @@ void Flanging::apply()
     switch (m_sample_size)
     {
     case 1:
-        new_bufferIn_8 = (char*) (m_bufferIn);
-        new_bufferOut_8 = (char*) (m_bufferOut);
-
         fread (new_bufferIn_8, m_sample_size, m_size_in_samples, m_fileIn);
 
         for (int i=m_delay_max; i < m_size_in_samples ; i++)
@@ -71,9 +68,6 @@ void Flanging::apply()
         break;
 
     case 2:
-        new_bufferIn_16 = (int16_t*) (m_bufferIn);
-        new_bufferOut_16 = (int16_t*) (m_bufferOut);
-
         fread (new_bufferIn_16, m_sample_size, m_size_in_samples, m_fileIn);
 
         for (int i=m_delay_max; i < m_size_in_samples ; i++)
