@@ -1,44 +1,41 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
-#include <sstream>
-#include <bitset>
-#include <string.h>
-#include <iostream>
-#include <stdlib.h>
-
-#include "speed_up/speed_up.h"
-#include "reverse/reverse.h"
-#include "echo/echo.h"
-#include "modulation/modulation.h"
-#include "phase_shifter/phase_shifter.h"
-#include "random_LSB/random_LSB.h"
-#include "random_MSB/random_MSB.h"
-#include "flanging/flanging.h"
-
+#include "Reverse_filter/Reverse.h"
+#include "Speed_up_filter/Speed_up.h"
+#include "Modulation_filter/Modulation.h"
+#include "Phase_shifter_filter/Phase_shifter.h"
+#include "Echo_filter/Echo.h"
+#include "Flanging_filter/Flanging.h"
+#include "Random_MSB_filter/Random_MSB.h"
+#include "Random_LSB_filter/Random_LSB.h"
 
 
 int main()
 {
-    double Fs = 44100;
-
-    //  // for 8 digits
-    speed_up("data/europa_8.raw");
-    modulation("data/europa_8.raw", Fs, 5);
-    random_MSB("data/europa_8.raw", 1);
-    random_LSB("data/europa_8.raw", 3);
-    reverse("data/europa_8.raw");
-    phase_shifter("data/europa_8.raw", -1, 1000);
-    echo("data/europa_8.raw", Fs, 2, 0.5);
-    flanging("data/europa_8.raw", Fs, 0.80, 90);
+    double Fs = 44100;  // sampling frequency
 
 
-    // // for 16 digits
-    speed_up_16("data/smokeotw_16le.raw");
-    modulation_16("data/smokeotw_16le.raw", Fs, 10);
+    Reverse reverse_filter("data/europa_8.raw", 8);
+    reverse_filter.apply();
 
-    //  not working yet
-    random_MSB_16("data/smokeotw_16le.raw", 2);
+    Speed_up speed_up_filter("data/europa_16le.raw", 16);
+    speed_up_filter.apply();
+    
+    Modulation modulation_filter("data/europa_8.raw", 8, Fs, 5);
+    modulation_filter.apply();
+
+    Phase_shifter phase_shifter_filter("data/europa_16le.raw", 16, -0.95, 500);
+    phase_shifter_filter.apply();
+
+    Echo echo_filter("data/europa_8.raw", 8, Fs, 0.5, 2);
+    echo_filter.apply();
+
+    Flanging flanging_filter("data/europa_16le.raw", 16, Fs, 0.80, 90);
+    flanging_filter.apply();
+
+    Random_MSB random_msb_filter("data/europa_8.raw", 8, 1);
+    random_msb_filter.apply();
+
+    Random_LSB random_lsb_filter("data/europa_8.raw", 8, 2);
+    random_lsb_filter.apply();
 
 }
 

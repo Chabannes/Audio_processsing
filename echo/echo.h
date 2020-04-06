@@ -1,1 +1,0 @@
-void echo(std::string file_name, double sampling_frequency, float echo_dt, float echo_fading);

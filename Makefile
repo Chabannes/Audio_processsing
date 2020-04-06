@@ -1,29 +1,33 @@
-Exe: flanging/flanging.o echo/echo.o phase_shifter/phase_shifter.o main.o random_LSB/random_LSB.o random_MSB/random_MSB.o modulation/modulation.o speed_up/speed_up.o reverse/reverse.o
-	g++ -o Exe flanging/flanging.o echo/echo.o phase_shifter/phase_shifter.o main.o random_LSB/random_LSB.o random_MSB/random_MSB.o modulation/modulation.o speed_up/speed_up.o reverse/reverse.o
+Exe:  main.o Random_LSB_filter/Random_LSB.o Random_MSB_filter/Random_MSB.o Flanging_filter/Flanging.o Echo_filter/Echo.o Phase_shifter_filter/Phase_shifter.o Modulation_filter/Modulation.o Speed_up_filter/Speed_up.o Reverse_filter/Reverse.o Filter/Filter.o 
+	g++ -o Exe main.o Random_LSB_filter/Random_LSB.o Random_MSB_filter/Random_MSB.o Flanging_filter/Flanging.o Echo_filter/Echo.o Phase_shifter_filter/Phase_shifter.o Modulation_filter/Modulation.o Speed_up_filter/Speed_up.o Reverse_filter/Reverse.o Filter/Filter.o 
 
-flanging.o: flanging/flanging.cpp
-	g++ -c flanging/flanging.cpp
+Filter.o: Filter/Filter.cpp
+	g++ -c Filter/Filter.cpp
 
-echo.o: echo/echo.cpp
-	g++ -c echo/echo.cpp
+Reverse.o: Reverse_filter/Reverse.cpp
+	g++ -c Reverse_filter/Reverse.cpp
 
-modulation.o: modulation/modulation.cpp
-	g++ -c modulation/modulation.cpp	
+Speed_up.o: Speed_up_filter/Speed_up.cpp
+	g++ -c Speed_up_filter/Speed_up.cpp
 
-phase_shifter.o: phase_shifter/phase_shifter.cpp
-	g++ -c phase_shifter/phase_shifter.cpp
+Modulation.o: Modulation_filter/Modulation.cpp
+	g++ -c Modulation_filter/Modulation.cpp
 
-random_LSB.o: random_LSB/random_LSB.cpp
-	g++ -c random_LSB/random_LSB.cpp
+Phase_shifter.o: Phase_shifter_filter/Phase_shifter.cpp
+	g++ -c  Phase_shifter_filter/Phase_shifter.cpp
 
-random_MSB.o: random_MSB/random_MSB.cpp
-	g++ -c random_MSB/random_MSB.cpp
+Echo.o: Echo_filter/Echo.cpp
+	g++ -c Echo_filter/Echo.cpp
 
-speed_up.o: speed_up/speed_up.cpp
-	g++ -c speed_up/speed_up.cpp
+Flanging.o: Flanging_filter/Flanging.cpp
+	g++ -c Flanging_filter/Flanging.cpp
 
-reverse.o: reverse/reverse.cpp
-	g++ -c reverse/reverse.cpp
+Random_MSB.o: Random_MSB_filter/Random_MSB.cpp
+	g++ -c Random_MSB_filter/Random_MSB.cpp
+
+Random_LSB.o: Random_LSB_filter/Random_LSB.cpp
+	g++ -c Random_LSB_filter/Random_LSB.cpp
+
 
 main.o: main.cpp
 	g++ -c main.cpp
